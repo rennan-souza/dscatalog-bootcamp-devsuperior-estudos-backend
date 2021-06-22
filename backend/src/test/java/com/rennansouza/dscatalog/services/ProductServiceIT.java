@@ -14,10 +14,6 @@ import com.rennansouza.dscatalog.dto.ProductDTO;
 import com.rennansouza.dscatalog.repositories.ProductRepository;
 import com.rennansouza.dscatalog.services.exceptions.ResourceNotFoundException;
 
-
-
-//Testes de integração
-
 @SpringBootTest
 @Transactional
 public class ProductServiceIT {
@@ -36,26 +32,31 @@ public class ProductServiceIT {
 	void setUp() throws Exception {
 		existingId = 1L;
 		nonExistingId = 1000L;
-		countTotalProducts = 25L;	
+		countTotalProducts = 25L;
 	}
 	
 	@Test
 	public void deleteShouldDeleteResourceWhenIdExists() {
+		
 		service.delete(existingId);
+
 		Assertions.assertEquals(countTotalProducts - 1, repository.count());
 	}
 	
 	@Test
-	public void deleteShouldThrowResourceNotFoundExceptionWhenIdDoesNotExists() {
+	public void deleteShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
+		
 		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
 			service.delete(nonExistingId);
-		});	
+		});
 	}
 	
 	@Test
-	public void findAllPagedShouldReturnPageWhen0Size10() {
+	public void findAllPagedShouldReturnPageWhenPage0Size10() {
+		
 		PageRequest pageRequest = PageRequest.of(0, 10);
-		Page<ProductDTO> result =  service.findAllPaged(pageRequest);
+		
+		Page<ProductDTO> result = service.findAllPaged(0L, "", pageRequest);
 		
 		Assertions.assertFalse(result.isEmpty());
 		Assertions.assertEquals(0, result.getNumber());
@@ -64,35 +65,25 @@ public class ProductServiceIT {
 	}
 	
 	@Test
-	public void findAllPagedShouldReturnEmptyPageWhenPageDoesNotExists() {
+	public void findAllPagedShouldReturnEmptyPageWhenPageDoesNotExist() {
+		
 		PageRequest pageRequest = PageRequest.of(50, 10);
-		Page<ProductDTO> result =  service.findAllPaged(pageRequest);
+		
+		Page<ProductDTO> result = service.findAllPaged(0L, "", pageRequest);
 		
 		Assertions.assertTrue(result.isEmpty());
 	}
 	
 	@Test
 	public void findAllPagedShouldReturnSortedPageWhenSortByName() {
+		
 		PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("name"));
-		Page<ProductDTO> result =  service.findAllPaged(pageRequest);
+		
+		Page<ProductDTO> result = service.findAllPaged(0L, "", pageRequest);
 		
 		Assertions.assertFalse(result.isEmpty());
 		Assertions.assertEquals("Macbook Pro", result.getContent().get(0).getName());
 		Assertions.assertEquals("PC Gamer", result.getContent().get(1).getName());
-		Assertions.assertEquals("PC Gamer Alfa", result.getContent().get(2).getName());
+		Assertions.assertEquals("PC Gamer Alfa", result.getContent().get(2).getName());		
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
